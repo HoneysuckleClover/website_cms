@@ -8,7 +8,7 @@
           <h1><b>Data Kategori</b> <small>kategori artikel</small></h1>
         </div>
       </div>
-    </div><!-- /.container-fluid -->
+    </div>
   </section>
 
   <!-- Main Content -->
@@ -19,9 +19,9 @@
 
           <div class="card">
             <div class="card-header">
-              <a href="<? echo base_url('dashboard/kategori_tambah'); ?>">
+              <a href="<?= base_url('dashboard/kategori_tambah'); ?>">
                 <button class="btn btn-sm btn-success">
-                  Buat Kategori Baru <i class="fas fa-plus"></i> 
+                  Buat Kategori Baru <i class="fas fa-plus"></i>
                 </button>
               </a>
             </div>
@@ -36,37 +36,42 @@
                     <th width="15%">Aksi</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  <?php
-                  $no = 1;
-                  foreach ($kategori as $k) {
-                  ?>
+                  <?php $no = 1; ?>
+                  <?php foreach ($kategori as $k): ?>
                     <tr>
                       <td><?= $no++; ?></td>
                       <td><?= $k->kategori_nama; ?></td>
                       <td><?= $k->kategori_slug; ?></td>
+
                       <td>
+                        <!-- Edit -->
                         <a href="<?= base_url('dashboard/kategori_edit/' . $k->kategori_id); ?>">
                           <button class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i>
                           </button>
                         </a>
 
-                        <a href="<?= base_url('dashboard/kategori_hapus/' . $k->kategori_id); ?>" onclick="return confirm('Yakin Hapus Data Ini ?')">
+                        <!-- Hapus -->
+                        <a href="<?= base_url('dashboard/kategori_hapus/' . $k->kategori_id); ?>"
+                           onclick="return confirm('Yakin Hapus Data Ini ?')">
                           <button class="btn btn-sm btn-danger">
                             <i class="fas fa-trash"></i>
                           </button>
                         </a>
                       </td>
                     </tr>
-                  <?php } ?>
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>
+
           </div>
 
         </div>
       </div>
     </div>
   </section>
+
 </div>

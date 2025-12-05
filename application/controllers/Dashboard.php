@@ -20,8 +20,16 @@ class Dashboard extends CI_Controller {
 
     function index()
     {
+        //hitung jumlah artikel
+        $data['jumlah_artikel'] = $this->m_data->get_data('artikel')->num_rows();
+        //hitung jumlah kategori
+        $data['jumlah_kategori'] = $this->m_data->get_data('kategori')->num_rows();
+        //hitung jumlah pengguna
+        $data['jumlah_pengguna'] = $this->m_data->get_data('pengguna')->num_rows();
+        //hitung jumlah halaman
+        $data['jumlah_halaman'] = $this->m_data->get_data('halaman')->num_rows();
         $this->load->view('dashboard/v_header');
-        $this->load->view('dashboard/v_index');
+        $this->load->view('dashboard/v_index',$data);
         $this->load->view('dashboard/v_footer');
     }
 
@@ -347,6 +355,328 @@ class Dashboard extends CI_Controller {
         $this->load->view('dashboard/v_header');
         $this->load->view('dashboard/v_pages',$data);
         $this->load->view('dashboard/v_footer');
+    }
+
+    function pages_tambah() 
+    {
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_pages_tambah');
+        $this->load->view('dashboard/v_footer');
+    }
+
+    function pages_aksi()
+    {
+        //wajib isi judul dan konten
+        $this->form_validation->set_rules('judul','Judul','required|is_unique[halaman.halaman_judul]');
+        $this->form_validation->set_rules('konten','Konten','required');
+        if ($this->form_validation->run() != false) {
+            $judul = $this->input->post('judul');
+            $slug = strtolower(url_title($judul));
+            $konten = $this->input->post('konten');
+            $data = array(
+                'halaman_judul' => $judul,
+                'halaman_slug' => $slug,
+                'halaman_konten' => $konten
+            );
+
+            $this->m_data->insert_data('halaman',$data);
+            redirect(base_url().'dashboard/pages');
+        } else {
+            $this->load->view('dashboard/v_header');
+            $this->load->view('dashboard/v_pages_tambah');
+            $this->load->view('dashboard/v_footer');
+        }
+    }
+
+    function pages_edit($id)
+    {
+        $where = array('halaman_id' => $id );
+        $data['halaman'] = $this->m_data->edit_data('halaman',$where)->result();
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_pages_edit',$data);
+        $this->load->view('dashboard/v_footer');
+    }
+
+    function pages_update()
+    {
+        //wajib isi judul dan konten
+        $this->form_validation->set_rules('judul','Judul','required');
+        $this->form_validation->set_rules('konten','Konten','required');
+        if ($this->form_validation->run() != false) {
+            $id = $this->input->post('id');
+            $judul = $this->input->post('judul');
+            $slug = strtolower(url_title($judul));
+            $konten = $this->input->post('konten');
+            $where = array(
+                    'halaman_id' => $id
+            );
+            $data = array(
+                    'halaman_judul' => $judul,
+                    'halaman_slug' => $slug,
+                    'halaman_konten' => $konten
+            );
+            $this->m_data->update_data('halaman', $data, $where);
+            redirect(base_url().'dashboard/pages');
+        } else {
+            $id = $this->input->post('id');
+            $where = array('halaman_id' => $id );
+            $data['halaman'] = $this->m_data->edit_data('halaman',$where)->result();
+            $this->load->view('dashboard/v_header');
+            $this->load->view('dashboard/v_pages_edit',$data);
+            $this->load->view('dashboard/v_footer');
+        }
+
+    }
+
+    public function pages_hapus($id)
+    {
+        $where = array(
+                'halaman_id' => $id
+        );
+        $this->m_data->delete_data('halaman',$where);
+        redirect(base_url().'dashboard/pages');
+    }
+
+    public function profil()
+    {
+        //ambil id pengguna yang sedang login
+        $id_pengguna = $this->session->userdata('id');
+        $where = array(
+                'pengguna_id' => $id_pengguna
+        );
+        $data['pengguna'] = $this->m_data->edit_data('pengguna',$where)->result();
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_profil',$data);
+        $this->load->view('dashboard/v_footer');
+    }
+
+    public function profil_update() 
+    {
+        //rules form wajib diisi untuk nama dan email
+        $this->form_validation->set_rules('nama','Nama', 'Required');
+        $this->form_validation->set_rules('email','Email', 'Required');
+        if ($this->form_validation->run() != false) {
+            $id = $this->session->userdata('id');
+            $nama = $this->input->post('nama');
+            $email = $this->input->post('email');
+            $where = array(
+                    'pengguna_id' => $id
+            );
+            $data = array(
+                    'pengguna_nama' => $nama,
+                    'pengguna_email' => $email
+            );
+            $this->m_data->update_data('pengguna',$data,$where);
+            redirect(base_url().'dashboard/profil/?alert=sukses');
+        } else {
+            //id pengguna yang sedang login
+            $id_pengguna = $this->session->userdata('id');
+            $where = array(
+                    'pengguna_id' => $id
+            );
+            $data['pengguna'] = $this->m_data->edit_data('pengguna',$where)->result();
+            $this->load->view('dashboard/v_header');
+            $this->load->view('dashboard/v_profil',$data);
+            $this->load->view('dashboard/v_footer');
+        }
+    }
+
+    public function pengaturan() 
+    {
+        $data['pengaturan'] = $this->m_data->get_data('pengaturan')->result();
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_pengaturan',$data);
+        $this->load->view('dashboard/v_footer');
+    }
+
+    public function pengaturan_update() 
+    {
+        //Wjib diisi untuk dama dan deskripsi
+        $this->form_validation->set_rules('nama', 'Nama', 'required');
+        $this->form_validation->set_rules('deskripsi','Deskripsi', 'required');
+        if ($this->form_validation->run() != false) {
+            $nama = $this->input->post('nama');
+            $deskripsi = $this->input->post('deskripsi');
+            $link_facebook = $this->input->post('link_facebook');
+            $link_twitter = $this->input->post('link_twitter');
+            $link_instagram = $this->input->post('link_instagram');
+            $link_github = $this->input->post('link_github');
+            $where = array(
+
+            );
+            $data = array(
+                    'nama' => $nama,
+                    'deskripsi' => $deskripsi,
+                    'link_facebook' => $link_facebook,
+                    'link_twitter' => $link_twitter,
+                    'link_instagram' => $link_instagram,
+                    'link_github' => $link_github
+            );
+
+        //update pengaturan website
+        $this->m_data->update_data('pengaturan',$data,$where);
+        //periksa apakah ada gambar yang akan diupload
+        if (!empty($_FILES['logo']['name'])) {
+            $config['upload_path'] = './gambar/website/';
+            $config['allowed_types'] = 'jpg|png';
+
+            $this->load->library('upload',$config);
+                if ($this->upload->do_upload('logo')) {
+                    //mengambil data logo yang akan diupload
+                    $gambar = $this->upload->data();
+                    $logo = $gambar['file_name'];
+                    $this->db->query("UPDATE pengaturan SET logo='$logo'");
+                }
+        }
+        redirect(base_url().'dashboard/pengaturan/?alert=sukses');
+        } else {
+            $data['pengaturan'] = $this->m_data->get_data('pengaturan')->result();
+            $this->load->view('dashboard/v_header');
+            $this->load->view('dashboard/v_pengaturan',$data);
+            $this->load->view('dashboard/v_footer');
+        }
+    }
+
+    public function pengguna() 
+    {
+        $data['pengguna'] = $this->m_data->get_data('pengguna')->result();
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_pengguna',$data);
+        $this->load->view('dashboard/v_footer');
+    }
+
+    public function pengguna_tambah() 
+    {
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_pengguna_tambah');
+        $this->load->view('dashboard/v_footer');
+    }
+
+    public function pengguna_tambah_aksi()
+    {
+        $this->form_validation->set_rules('nama', 'Nama Pengguna', 'required');
+        $this->form_validation->set_rules('email', 'Email Pengguna', 'required');
+        $this->form_validation->set_rules('username', 'Username Pengguna', 'required');
+        $this->form_validation->set_rules('password', 'Password Pengguna', 'required|min_length[8]');
+        $this->form_validation->set_rules('level', 'Level Pengguna', 'required');
+        $this->form_validation->set_rules('status', 'Status Pengguna', 'required');
+        if ($this->form_validation->run() != false) {
+            $nama = $this->input->post('nama');
+            $email = $this->input->post('email');
+            $username = $this->input->post('username');
+            $password = md5($this->input->post('password'));
+            $level = $this->input->post('level');
+            $status = $this->input->post('status');
+            $data = array(
+                    'pengguna_nama' => $nama,
+                    'pengguna_email' => $email,
+                    'pengguna_username' => $username,
+                    'pengguna_password' => $password,
+                    'pengguna_level' => $level,
+                    'pengguna_status' => $status
+            );
+            $this->m_data->insert_data('pengguna',$data);
+            redirect(base_url().'dashboard/pengguna');
+        } else {
+            $this->load->view('dashboard/v_header');
+            $this->load->view('dashboard/v_pengguna_tambah');
+            $this->load->view('dashboard/v_footer');
+        }
+    }
+
+    public function pengguna_edit($id)
+    {
+        $where = array(
+                'pengguna_id' => $id
+        );
+        $data['pengguna'] = $this->m_data->edit_data('pengguna',$where)->result();
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_pengguna_edit', $data);
+        $this->load->view('dashboard/v_footer');
+    }
+
+    public function pengguna_update()
+    {
+        //rules untuk wajib diisi
+        $this->form_validation->set_rules('nama', 'Nama Pengguna', 'required');
+        $this->form_validation->set_rules('email', 'Email Pengguna', 'required');
+        $this->form_validation->set_rules('username', 'Username Pengguna', 'required');
+        $this->form_validation->set_rules('level', 'Level Pengguna', 'required');
+        $this->form_validation->set_rules('status', 'Status Pengguna', 'required');
+        if ($this->form_validation->run() != false) {
+            $id = $this->input->post('id');
+            $nama = $this->input->post('nama');
+            $email = $this->input->post('email');
+            $username = $this->input->post('username');
+            $password = md5($this->input->post('password'));
+            $level = $this->input->post('level');
+            $status = $this->input->post('status');
+        //cek apabila password tidak diisi, maka kolom password tidakakan diupdate
+        if ($this->input->post('password') == "") {
+            $data = array(
+                    'pengguna_nama' => $nama,
+                    'pengguna_email' => $email,
+                    'pengguna_username' => $username,
+                    'pengguna_level' => $level,
+                    'pengguna_status' => $status
+            );
+        } else  {
+            $data = array(
+                    'pengguna_nama' => $nama,
+                    'pengguna_email' => $email,
+                    'pengguna_username' => $username,
+                    'pengguna_password' => $password,
+                    'pengguna_level' => $level,
+                    'pengguna_status' => $status
+            );
+        }
+            $where = array(
+                     'pengguna_id' => $id
+            );
+            $this->m_data->update_data('pengguna',$data,$where);
+            redirect(base_url().'dashboard/pengguna');
+        } else {
+            $id = $this->input->post('id');
+            $where = array(
+                    'pengguna_id' => $id
+            );
+            $data['pengguna'] = $this->m_data->get_data('pengguna',$where)->result();
+            $this->load->view('dashboard/v_header');
+            $this->load->view('dashboard/v_pengguna_edit', $data);
+            $this->load->view('dashboard/v_footer');
+        }
+    }
+
+    public function pengguna_hapus($id) 
+    {
+        $where = array(
+                'pengguna_id' => $id
+        );
+        $data['pengguna_hapus'] = $this->m_data->edit_data('pengguna',$where)->row();
+        $data['pengguna_lain'] = $this->db->query("SELECT * FROM pengguna WHERE pengguna_id != '$id'")->result();
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_pengguna_hapus', $data);
+        $this->load->view('dashboard/v_footer');
+    }
+
+    public function pengguna_hapus_aksi()
+    {
+        $pengguna_hapus = $this->input->post('pengguna_hapus');
+        $pengguna_tujuan = $this->input->post('pengguna_tujuan');
+        //hapus data pengguna
+        $where = array(
+                'pengguna_id' => $pengguna_hapus
+        );
+        $this->m_data->delete_data('pengguna',$where);
+        //pindahkan semua artikel pengguna yang dihapus pada pengguna tujuan
+        $w = array(
+            'artikel_author' => $pengguna_hapus
+        );
+        $d = array(
+            'artikel_author' => $pengguna_tujuan
+        );
+        $this->m_data->update_data('artikel',$d,$w);
+        redirect(base_url().'dashboard/pengguna');
     }
 
     function keluar()
