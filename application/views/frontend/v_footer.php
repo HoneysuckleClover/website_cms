@@ -1,119 +1,128 @@
-<!-- Footer Section -->
-<footer class="footer bg-dark text-light pt-5 pb-4">
+<!-- FOOTER -->
+<footer class="footer-section pt-5 pb-4">
     <div class="container text-center">
 
         <!-- Social Icons -->
-        <div class="socials mb-3">
+        <div class="footer-social mb-4">
             <ul class="list-inline">
+
                 <?php if (!empty($pengaturan->link_facebook)) : ?>
-                    <li class="list-inline-item">
-                        <a href="<?= $pengaturan->link_facebook ?>" target="_blank" class="social-icon">
-                            <i class="ion-social-facebook"></i>
-                        </a>
-                    </li>
+                <li class="list-inline-item">
+                    <a href="<?= $pengaturan->link_facebook ?>" target="_blank" class="fsocial">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </li>
                 <?php endif; ?>
 
                 <?php if (!empty($pengaturan->link_instagram)) : ?>
-                    <li class="list-inline-item">
-                        <a href="<?= $pengaturan->link_instagram ?>" target="_blank" class="social-icon">
-                            <i class="ion-social-instagram"></i>
-                        </a>
-                    </li>
+                <li class="list-inline-item">
+                    <a href="<?= $pengaturan->link_instagram ?>" target="_blank" class="fsocial">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </li>
                 <?php endif; ?>
 
                 <?php if (!empty($pengaturan->link_twitter)) : ?>
-                    <li class="list-inline-item">
-                        <a href="<?= $pengaturan->link_twitter ?>" target="_blank" class="social-icon">
-                            <i class="ion-social-twitter"></i>
-                        </a>
-                    </li>
+                <li class="list-inline-item">
+                    <a href="<?= $pengaturan->link_twitter ?>" target="_blank" class="fsocial">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </li>
                 <?php endif; ?>
 
                 <?php if (!empty($pengaturan->link_github)) : ?>
-                    <li class="list-inline-item">
-                        <a href="<?= $pengaturan->link_github ?>" target="_blank" class="social-icon">
-                            <i class="ion-social-github"></i>
-                        </a>
-                    </li>
+                <li class="list-inline-item">
+                    <a href="<?= $pengaturan->link_github ?>" target="_blank" class="fsocial">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </li>
                 <?php endif; ?>
+
             </ul>
         </div>
 
         <!-- Copyright -->
-        <p class="mb-1">&copy; <?= date("Y") ?> <strong><?= $pengaturan->nama ?></strong>. All Rights Reserved.</p>
+        <p class="mb-1 small">
+            &copy; <?= date("Y") ?> <strong><?= $pengaturan->nama ?></strong>. All Rights Reserved.
+        </p>
 
         <!-- Credits -->
-        <p class="mb-0">Designed by <a href="https://bootstrapmade.com/" target="_blank" class="text-light">BootstrapMade</a></p>
+        <p class="mb-0 small text-muted">
+            Designed by <a href="https://bootstrapmade.com/" target="_blank" class="footer-credit">BootstrapMade</a>
+        </p>
 
     </div>
 </footer>
 
 <!-- Back to Top -->
-<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+<a href="#" class="backtotop">
+    <i class="fas fa-chevron-up"></i>
+</a>
 
 <style>
-.footer {
-    background-color: #111;
-    color: #ddd;
+/* FOOTER BASE */
+.footer-section {
+    background: #0f0f0f;
+    color: #ccc;
+    border-top: 1px solid rgba(255,255,255,0.08);
 }
 
-.footer a {
-    color: #ddd;
+.footer-section p {
+    color: #ccc;
+}
+
+.footer-credit {
+    color: #ffffff;
     text-decoration: none;
-    transition: color 0.3s;
 }
 
-.footer a:hover {
-    color: #007bff;
+.footer-credit:hover {
+    color: #00aaff;
 }
 
-.socials ul {
-    padding: 0;
-    margin: 0;
-}
-
-.socials ul li {
-    display: inline-block;
-    margin: 0 8px;
-}
-
-.social-icon {
+/* SOCIAL ICONS */
+.fsocial {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
+    margin: 0 6px;
     border-radius: 50%;
-    background-color: #222;
+    background: rgba(255,255,255,0.06);
     color: #fff;
-    transition: all 0.3s;
     font-size: 18px;
+    transition: all 0.35s ease;
 }
 
-.social-icon:hover {
-    background-color: #007bff;
+.fsocial:hover {
+    background: #00aaff;
     color: #fff;
-    transform: translateY(-3px);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,170,255,0.35);
 }
 
-.back-to-top {
+/* BACK TO TOP */
+.backtotop {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #007bff;
+    bottom: 24px;
+    right: 24px;
+    width: 42px;
+    height: 42px;
+    background: #00aaff;
     color: #fff;
-    width: 40px;
-    height: 40px;
+    font-size: 18px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    transition: all 0.3s;
     z-index: 999;
+    transition: all 0.35s ease;
+    box-shadow: 0 4px 12px rgba(0,170,255,0.35);
 }
 
-.back-to-top:hover {
-    background: #0056b3;
+.backtotop:hover {
+    background: #0088cc;
+    transform: translateY(-3px);
 }
 </style>

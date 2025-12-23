@@ -16,7 +16,7 @@ class Login extends CI_Controller{
     function aksi()
     {
         $this->form_validation->set_rules('username','Username','required');
-        $this->form_validation->set_rules('username','Password','required');
+        $this->form_validation->set_rules('password','Password','required');
 
             if ($this->form_validation->run() != false) {
                 //mengambil data username dan password dari halaman login

@@ -5,7 +5,10 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1><b>Data Kategori</b> <small>kategori artikel</small></h1>
+          <h1>
+            <b>Data Kategori</b>
+            <small>artikel & portfolio</small>
+          </h1>
         </div>
       </div>
     </div>
@@ -33,6 +36,7 @@
                     <th width="5%">No</th>
                     <th>Nama Kategori</th>
                     <th>Slug Kategori</th>
+                    <th width="12%">Tipe</th>
                     <th width="15%">Aksi</th>
                   </tr>
                 </thead>
@@ -44,6 +48,14 @@
                       <td><?= $no++; ?></td>
                       <td><?= $k->kategori_nama; ?></td>
                       <td><?= $k->kategori_slug; ?></td>
+
+                      <td>
+                        <?php if ($k->kategori_tipe == 'artikel'): ?>
+                          <span class="badge badge-primary">Artikel</span>
+                        <?php else: ?>
+                          <span class="badge badge-success">Portfolio</span>
+                        <?php endif; ?>
+                      </td>
 
                       <td>
                         <!-- Edit -->

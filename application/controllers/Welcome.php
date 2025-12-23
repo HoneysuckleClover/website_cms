@@ -7,35 +7,53 @@ class Welcome extends CI_Controller {
         parent::__construct();
         date_default_timezone_set('Asia/Jakarta');
         $this->load->model('m_data');
+        $this->load->helper('text');
     }
 
     // ============================================
     // Homepage
     // ============================================
     public function index()
-    {
-        // 3 artikel terbaru
-        $data['artikel'] = $this->db->query("
-            SELECT * FROM artikel, pengguna, kategori
-            WHERE artikel_status = 'publish'
-            AND artikel_author = pengguna_id
-            AND artikel_kategori = kategori_id
-            ORDER BY artikel_id DESC
-            LIMIT 3
-        ")->result();
+{
+    // 3 artikel terbaru
+    $data['artikel'] = $this->db->query("
+        SELECT * FROM artikel, pengguna, kategori
+        WHERE artikel_status = 'publish'
+        AND artikel_author = pengguna_id
+        AND artikel_kategori = kategori_id
+        ORDER BY artikel_id DESC
+        LIMIT 3
+    ")->result();
 
-        // Pengaturan website
-        $data['pengaturan'] = $this->m_data->get_data('pengaturan')->row();
+    // Portfolio terbaru (ambil 6 terbaru)
+    $data['portfolio'] = $this->db->query("
+    SELECT p.*, k.kategori_nama
+    FROM portfolio p
+    LEFT JOIN kategori k ON p.portfolio_kategori = k.kategori_id
+    WHERE p.portfolio_status = 'publish'
+    ORDER BY p.portfolio_id DESC
+    LIMIT 6
+    ")->result();
 
-        // SEO Meta
-        $data['meta_keyword']     = $data['pengaturan']->nama;
-        $data['meta_description'] = $data['pengaturan']->deskripsi;
+   $data['testimonial'] = $this->db
+    ->where('testimonial_status', 'approved')
+    ->order_by('testimonial_id', 'DESC')
+    ->limit(6) 
+    ->get('testimonial')
+    ->result();
 
-        // Load View
-        $this->load->view('frontend/v_header', $data);
-        $this->load->view('frontend/v_homepage', $data);
-        $this->load->view('frontend/v_footer', $data);
-    }
+    // Pengaturan website
+    $data['pengaturan'] = $this->m_data->get_data('pengaturan')->row();
+
+    // SEO Meta
+    $data['meta_keyword']     = $data['pengaturan']->nama;
+    $data['meta_description'] = $data['pengaturan']->deskripsi;
+
+    // Load View
+    $this->load->view('frontend/v_header', $data);
+    $this->load->view('frontend/v_homepage', $data);
+    $this->load->view('frontend/v_footer', $data);
+}
 
     // ============================================
     // Single Artikel
@@ -304,4 +322,44 @@ class Welcome extends CI_Controller {
     $this->load->view('frontend/v_notfound',$data);
     $this->load->view('frontend/v_footer',$data);
     }
+
+    // ============================================
+// Halaman Detail Portfolio
+// ============================================
+public function portfolio($slug)
+{
+    // Pengaturan website
+    $data['pengaturan'] = $this->m_data->get_data('pengaturan')->row();
+    $data['meta_keyword'] = $data['pengaturan']->nama;
+    $data['meta_description'] = $data['pengaturan']->deskripsi;
+
+    // Ambil data portfolio berdasarkan slug + join kategori + filter status publish
+    $portfolio = $this->db->query("
+        SELECT p.*, k.kategori_nama
+        FROM portfolio p
+        LEFT JOIN kategori k ON p.portfolio_kategori = k.kategori_id
+        WHERE p.portfolio_slug = '$slug'
+        AND p.portfolio_status = 'publish'
+        LIMIT 1
+    ")->result();
+
+    // Jika tidak ditemukan, redirect ke notfound
+    if (count($portfolio) == 0) {
+        redirect('welcome/notfound');
+        return;
+    }
+
+    // Simpan data portfolio
+    $data['portfolio'] = $portfolio;
+
+    // Update meta SEO berdasarkan portfolio
+    $data['meta_keyword']     = $portfolio[0]->portfolio_judul;
+    $data['meta_description'] = substr($portfolio[0]->portfolio_deskripsi, 0, 100);
+
+    // Load view
+    $this->load->view('frontend/v_header', $data);
+    $this->load->view('frontend/v_portfolio_detail', $data);
+    $this->load->view('frontend/v_footer', $data);
+}
+
 }

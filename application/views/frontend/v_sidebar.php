@@ -50,20 +50,35 @@
         </ul>
     </div>
 
-    <!-- Kategori -->
-    <div class="widget-sidebar mb-4 p-3 rounded bg-white shadow-sm">
-        <h5 class="sidebar-title">Kategori</h5>
-        <ul class="list-unstyled mt-2">
-            <?php
-            $kategori = $this->m_data->get_data('kategori')->result();
+    <!-- Kategori Artikel -->
+<div class="widget-sidebar mb-4 p-3 rounded bg-white shadow-sm">
+    <h5 class="sidebar-title">Kategori</h5>
+    <ul class="list-unstyled mt-2">
+        <?php
+        $kategori = $this->db->query("
+            SELECT * FROM kategori
+            WHERE kategori_tipe = 'artikel'
+            ORDER BY kategori_nama ASC
+        ")->result();
+
+        if (count($kategori) > 0) {
             foreach ($kategori as $k) {
-            ?>
+        ?>
             <li class="mb-2">
-                <a href="<?= base_url() . 'kategori/' . $k->kategori_slug; ?>" class="sidebar-link"><?= $k->kategori_nama; ?></a>
+                <a href="<?= base_url('kategori/' . $k->kategori_slug); ?>"
+                   class="sidebar-link">
+                   <?= $k->kategori_nama; ?>
+                </a>
             </li>
-            <?php } ?>
-        </ul>
-    </div>
+        <?php
+            }
+        } else {
+        ?>
+            <li class="text-muted">Belum ada kategori</li>
+        <?php } ?>
+    </ul>
+</div>
+
 
 </aside>
 

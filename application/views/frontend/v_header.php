@@ -9,12 +9,12 @@
     <meta name="description" content="<?= $meta_description; ?>">
     <meta name="theme-color" content="#343a40">
 
-    <!-- Favicons -->
+    <!-- Favicon -->
     <link rel="icon" href="<?= base_url('gambar/website/'.$pengaturan->logo); ?>">
 
     <!-- CSS Vendor -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
@@ -24,33 +24,52 @@
     <link rel="stylesheet" href="<?= base_url('assets_frontend/css/styles.css'); ?>">
 
     <style>
-        /* Navbar Translucent & Scroll Effect */
-        .navbar-trans {
-            background-color: transparent;
-            transition: background-color 0.3s ease, padding 0.3s ease;
-            padding: 15px 0;
-        }
+    /* NAVBAR FULL BLACK */
+    .navbar-trans {
+        background: #000 !important; /* hitam solid */
+        padding: 16px 0;
+        transition: all 0.25s ease;
+    }
 
-        .navbar.scrolled {
-            background-color: rgba(0, 0, 0, 0.85);
-            padding: 10px 0;
-        }
+    /* Tidak perlu lagi efek scrolled, tapi tetap saya biarkan kalau ingin dipakai */
+    .navbar.scrolled {
+        background: #000 !important;
+        padding: 12px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
 
-        /* Navbar Toggler */
-        .navbar-toggler span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            margin: 5px;
-            background-color: #fff;
-            transition: 0.3s;
-        }
+    .navbar .nav-link {
+        color: #ffffff !important;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        transition: color 0.25s ease;
+    }
 
-        /* Konten tidak tertabrak navbar */
-        body {
-            padding-top: 0; /* akan di-set otomatis via JS */
-        }
-    </style>
+    .navbar .nav-link:hover {
+        color: #00aaff !important;
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        color: #fff !important;
+        letter-spacing: 0.4px;
+    }
+
+    /* Toggle Icon */
+    .navbar-toggler span {
+        width: 26px;
+        height: 3px;
+        margin: 5px;
+        background: #fff;
+        display: block;
+        transition: 0.3s;
+    }
+
+    body {
+        padding-top: 0; /* ditimpa JS */
+    }
+</style>
+
 </head>
 
 <body id="page-top">
@@ -60,13 +79,14 @@
         <div class="container">
 
             <!-- Logo -->
-            <img src="<?= base_url('gambar/website/'.$pengaturan->logo); ?>" 
-                 width="32" class="mr-2" alt="Logo">
+            <a href="<?= base_url(); ?>" class="d-flex align-items-center text-decoration-none">
+                <img src="<?= base_url('gambar/website/'.$pengaturan->logo); ?>" 
+                     width="32" class="mr-2" alt="Logo">
+                <span class="navbar-brand mb-0"><?= $pengaturan->nama; ?></span>
+            </a>
 
-            <a class="navbar-brand" href="#page-top"><?= $pengaturan->nama; ?></a>
-
-            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" 
-                    data-target="#navbarDefault" aria-controls="navbarDefault" 
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+                    data-target="#navbarDefault" aria-controls="navbarDefault"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span></span>
                 <span></span>
@@ -80,7 +100,7 @@
                     <li class="nav-item"><a class="nav-link" href="<?= base_url('page/layanan'); ?>">Layanan</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= base_url('page/kontak'); ?>">Kontak</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= base_url('blog'); ?>">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= base_url('login'); ?>">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= base_url('#'); ?>">Login</a></li>
                 </ul>
             </div>
 
@@ -95,15 +115,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 
-    <!-- Navbar Scroll Effect & Padding Otomatis -->
+    <!-- NAVBAR EFFECT -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const nav = document.getElementById("mainNav");
-            const navHeight = nav.offsetHeight;
-            document.body.style.paddingTop = navHeight + "px";
 
+            // Atur padding top otomatis
+            document.body.style.paddingTop = nav.offsetHeight + "px";
+
+            // Efek scroll
             window.addEventListener("scroll", function () {
-                if (window.scrollY > 50) {
+                if (window.scrollY > 60) {
                     nav.classList.add("scrolled");
                 } else {
                     nav.classList.remove("scrolled");

@@ -152,6 +152,20 @@
           </li>
 
           <li class="nav-item">
+            <a href="<?php echo base_url('dashboard/portfolio'); ?>" class="nav-link">
+              <i class="nav-icon fas fa-briefcase"></i>
+              <p>PORTOFOLIO</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?php echo base_url('dashboard/testimonial'); ?>" class="nav-link">
+              <i class="nav-icon fas fa-comments"></i>
+              <p>TESTIMONIAL</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
             <a href="<?php echo base_url('dashboard/pengguna'); ?>" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>PENGGUNA</p>

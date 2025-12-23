@@ -58,7 +58,7 @@
                         <option value="">-- Pilih Kategori --</option>
                         <?php foreach ($kategori as $k) { ?>
                           <option value="<?php echo $k->kategori_id; ?>"
-                            <?php if ($a->artikel_kategori == $k->kategori_id) echo "selected='selected'"; ?>>
+                            <?php if ($a->artikel_kategori == $k->kategori_id) echo "selected='selected'"; ?> >
                             <?php echo $k->kategori_nama; ?>
                           </option>
                         <?php } ?>
@@ -66,15 +66,24 @@
                       <small class="text-danger"><?php echo form_error('kategori'); ?></small>
                     </div>
 
+                    <!-- Gambar saat ini -->
                     <div class="form-group">
-                      <label>Gambar</label>
+                      <label>Gambar Saat Ini</label><br>
+                      <?php if (!empty($a->artikel_sampul) && file_exists(FCPATH.'gambar/artikel/'.$a->artikel_sampul)) { ?>
+                        <img src="<?= base_url('gambar/artikel/'.$a->artikel_sampul); ?>" 
+                             width="120" class="img-thumbnail mb-2">
+                      <?php } else { ?>
+                        <p><i>Tidak ada gambar</i></p>
+                      <?php } ?>
+                    </div>
+
+                    <!-- Upload gambar baru -->
+                    <div class="form-group">
+                      <label>Ganti Gambar (Opsional)</label>
                       <input type="file" name="sampul" class="form-control">
                       <br>
-                      <?php if (isset($gambar_error)) {
-                        echo $gambar_error;
-                      }
-                      echo form_error('sampul');
-                      ?>
+                      <?php if (isset($gambar_error)) { echo $gambar_error; } ?>
+                      <?php echo form_error('sampul'); ?>
                     </div>
 
                     <div class="form-group">

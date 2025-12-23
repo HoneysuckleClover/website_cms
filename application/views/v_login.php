@@ -18,7 +18,7 @@
 <div class="login-box">
   <!-- /.login-logo -->
    <?php
-   if (isset($GET['alert'])) {
+   if (isset($_GET['alert'])) {
     if ($_GET['alert']=='gagal') {
         echo "
         <div class='alert alert-danger font-weight-bold text-center'>
@@ -80,6 +80,11 @@
           <!-- /.col -->
           <div class="col-4">
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+
+            <p class="mb-0 text-center">
+              <a href="<?= base_url('register') ?>">Daftar akun baru</a>
+            </p>
+
           </div>
           <!-- /.col -->
         </div>

@@ -5,10 +5,13 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1><b>Data Kategori</b> <small>kategori artikel</small></h1>
+          <h1>
+            <b>Data Kategori</b>
+            <small>Edit Kategori</small>
+          </h1>
         </div>
       </div>
-    </div><!-- /.container-fluid -->
+    </div>
   </section>
 
   <!-- Main Content -->
@@ -18,44 +21,72 @@
         <div class="col-lg-12 connectedSortable">
 
           <a href="<?= base_url('dashboard/kategori'); ?>">
-            <button class="btn btn-sm btn-success">Kembali</button>
+            <button class="btn btn-sm btn-secondary">
+              <i class="fas fa-arrow-left"></i> Kembali
+            </button>
           </a>
           <br><br>
 
           <div class="card card-primary">
             <div class="card-header">
               <h3 class="card-title">
-                <i class="fas fa-th"></i> Kategori Artikel 
-                <small>Update Kategori</small>
+                <i class="fas fa-th"></i> Update Kategori
               </h3>
-            </div><!-- /.card-header -->
+            </div>
 
             <div class="card-body">
-              <?php foreach ($kategori as $k) { ?>
-                <form method="post" action="<?= base_url('dashboard/kategori_update'); ?>">
-                  
-                  <div class="form-group">
-                    <label>Nama Kategori</label>
-                    <input type="hidden" name="id" value="<?= $k->kategori_id; ?>">
-                    <input type="text" name="kategori" class="form-control"
-                      placeholder="Masukkan Nama Kategori..." 
-                      value="<?= $k->kategori_nama; ?>" required>
-                    <?= form_error('kategori'); ?>
-                  </div>
+              <?php foreach ($kategori as $k) : ?>
 
-                  <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-sm btn-primary">
-                  </div>
+              <form method="post" action="<?= base_url('dashboard/kategori_update'); ?>">
 
-                </form>
-              <?php } ?>
-            </div><!-- /.card-body -->
+                <!-- ID -->
+                <input type="hidden" name="kategori_id" value="<?= $k->kategori_id; ?>">
 
-          </div> <!-- /.card -->
+                <!-- Nama -->
+                <div class="form-group">
+                  <label>Nama Kategori</label>
+                  <input type="text"
+                         name="kategori_nama"
+                         class="form-control"
+                         value="<?= $k->kategori_nama; ?>"
+                         required>
+                  <?= form_error('kategori_nama'); ?>
+                </div>
+
+                <!-- Tipe -->
+                <div class="form-group">
+                  <label>Tipe Kategori</label>
+                  <select name="kategori_tipe" class="form-control" required>
+                    <option value="">-- Pilih Tipe --</option>
+                    <option value="artikel"
+                      <?= ($k->kategori_tipe == 'artikel') ? 'selected' : ''; ?>>
+                      Artikel
+                    </option>
+                    <option value="portfolio"
+                      <?= ($k->kategori_tipe == 'portfolio') ? 'selected' : ''; ?>>
+                      Portfolio
+                    </option>
+                  </select>
+                  <?= form_error('kategori_tipe'); ?>
+                </div>
+
+                <!-- Submit -->
+                <div class="form-group">
+                  <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="fas fa-save"></i> Update
+                  </button>
+                </div>
+
+              </form>
+
+              <?php endforeach; ?>
+            </div>
+
+          </div>
 
         </div>
       </div>
     </div>
-  </section><!-- /.content -->
+  </section>
 
 </div>

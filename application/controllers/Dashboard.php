@@ -84,96 +84,114 @@ class Dashboard extends CI_Controller {
             $this->load->view('dashboard/v_footer');
         }
     }
+// =====================
+// KATEGORI
+// =====================
 
-    function kategori() 
-    {
-        $data ['kategori'] = $this->m_data->get_data('kategori')->result();
-        $this->load->view('dashboard/v_header');
-        $this->load->view('dashboard/v_kategori',$data);
-        $this->load->view('dashboard/v_footer');
-    }
+function kategori() 
+{
+    $data['kategori'] = $this->db
+        ->order_by('kategori_tipe', 'ASC')
+        ->order_by('kategori_nama', 'ASC')
+        ->get('kategori')
+        ->result();
 
-    function kategori_tambah()
-    {
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_kategori', $data);
+    $this->load->view('dashboard/v_footer');
+}
+
+function kategori_tambah()
+{
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_kategori_tambah');
+    $this->load->view('dashboard/v_footer');
+}
+
+function kategori_tambah_aksi()
+{
+    $this->form_validation->set_rules('kategori_nama','Kategori','required');
+    $this->form_validation->set_rules('kategori_tipe','Tipe','required');
+
+    if ($this->form_validation->run() != false) {
+        $kategori_nama = $this->input->post('kategori_nama');
+        $kategori_tipe = $this->input->post('kategori_tipe');
+
+        $data = array(
+            'kategori_nama' => $kategori_nama,
+            'kategori_slug' => strtolower(url_title($kategori_nama)),
+            'kategori_tipe' => $kategori_tipe
+        );
+
+        $this->m_data->insert_data('kategori', $data);
+        redirect(base_url('dashboard/kategori'));
+    } else {
         $this->load->view('dashboard/v_header');
         $this->load->view('dashboard/v_kategori_tambah');
         $this->load->view('dashboard/v_footer');
     }
+}
 
-    function kategori_tambah_aksi()
-    {
-        $this->form_validation->set_rules('kategori','kategori','required');
-        if ($this->form_validation->run() != false) {
-            $kategori = $this->input->post('kategori');
-            $data = array(
-                'kategori_nama' => $kategori,
-                'kategori_slug' => strtolower(url_title($kategori))
-            );
-            $this->m_data->insert_data('kategori',$data);
-            redirect(base_url().'dashboard/kategori');
-        } else {
-            $this->load->view('dashboard/v_header');
-            $this->load->view('dashboard/v_kategori_tambah');
-            $this->load->view('dashboard/v_footer');
-        }
-    }
+function kategori_edit($id)
+{
+    $where = array('kategori_id' => $id);
+    $data['kategori'] = $this->m_data->edit_data('kategori', $where)->result();
 
-    function kategori_edit($id)
-    {
-        $where = array(
-            'kategori_id' => $id
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_kategori_edit', $data);
+    $this->load->view('dashboard/v_footer');
+}
+
+function kategori_update()
+{
+    $this->form_validation->set_rules('kategori_nama','Kategori','required');
+    $this->form_validation->set_rules('kategori_tipe','Tipe','required');
+
+    if ($this->form_validation->run() != false) {
+        $id            = $this->input->post('kategori_id'); // <--- perbaikan
+        $kategori_nama = $this->input->post('kategori_nama');
+        $kategori_tipe = $this->input->post('kategori_tipe');
+
+        $where = array('kategori_id' => $id);
+
+        $data = array(
+            'kategori_nama' => $kategori_nama,
+            'kategori_slug' => strtolower(url_title($kategori_nama)),
+            'kategori_tipe' => $kategori_tipe
         );
 
-        $data['kategori'] = $this->m_data->edit_data('kategori',$where)->result();
+        $this->m_data->update_data('kategori', $data, $where);
+        redirect(base_url('dashboard/kategori'));
+    } else {
+        $id = $this->input->post('kategori_id'); // <--- perbaikan
+        $where = array('kategori_id' => $id);
+        $data['kategori'] = $this->m_data->edit_data('kategori', $where)->result();
+
         $this->load->view('dashboard/v_header');
         $this->load->view('dashboard/v_kategori_edit', $data);
         $this->load->view('dashboard/v_footer');
     }
+}
 
-    function kategori_update()
-    {
-        $this->form_validation->set_rules('kategori', 'Kategori', 'required');
-        if ($this->form_validation->run() !=false) {
-            $id = $this->input->post('id');
-            $kategori = $this->input->post('kategori');
-            $where = array(
-                'kategori_id' => $id
-            );
-            $data = array(
-                'kategori_nama' => $kategori,
-                'kategori_slug' => strtolower(url_title($kategori))
-            );
-            $this->m_data->update_data('kategori',$data,$where);
-            redirect(base_url().'dashboard/kategori');
-        } else {
-            $id = $this->input->post('id');
-            $where = array(
-                'kategori_id' =>$id
-            );
-            $data['kategori'] = $this->m_data->edit_data('kategori',$where)->result();
-            $this->load->view('dashboard/v_header');
-            $this->load->view('dashboard/v_kategori_edit',$data);
-            $this->load->view('dashboard/v_footer');
-        }
-    }
+function kategori_hapus($id)
+{
+    $where = array('kategori_id' => $id);
+    $this->m_data->delete_data('kategori', $where);
+    redirect(base_url('dashboard/kategori'));
+}
 
-    function kategori_hapus($id)
-    {
-        $where = array(
-            'kategori_id' => $id
-        );
-        $this->m_data->delete_data('kategori',$where);
-        redirect(base_url().'dashboard/kategori');
-    }
 
     //fitur mengelola artikel
     function artikel()
     {
-        $data['artikel'] = $this->db->query('SELECT * FROM artikel,kategori,pengguna
-                                                WHERE artikel_kategori=kategori_id
-                                                and artikel_author=pengguna_id
-                                                order by artikel_id desc')->result();
-                                           
+       $data['artikel'] = $this->db->query("
+            SELECT a.*, k.kategori_nama, p.pengguna_nama
+            FROM artikel a
+            JOIN kategori k ON a.artikel_kategori = k.kategori_id
+            JOIN pengguna p ON a.artikel_author = p.pengguna_id
+            ORDER BY a.artikel_id DESC
+        ")->result();
+
                             $this->load->view('dashboard/v_header');
                             $this->load->view('dashboard/v_artikel',$data);
                             $this->load->view('dashboard/v_footer');
@@ -181,7 +199,10 @@ class Dashboard extends CI_Controller {
 
     function artikel_tambah()
     {
-        $data['kategori'] = $this->m_data->get_data('kategori')->result();
+        $data['kategori'] = $this->db
+            ->get_where('kategori',['kategori_tipe'=>'artikel'])
+            ->result();
+
         $this->load->view('dashboard/v_header');
         $this->load->view('dashboard/v_artikel_tambah',$data);
         $this->load->view('dashboard/v_footer');
@@ -250,7 +271,9 @@ class Dashboard extends CI_Controller {
             'artikel_id' => $id
         );
         $data['artikel'] = $this->m_data->edit_data('artikel',$where)->result();
-        $data['kategori'] = $this->m_data->get_data('kategori')->result();
+        $data['kategori'] = $this->db
+            ->get_where('kategori',['kategori_tipe'=>'artikel'])
+            ->result();
 
         $this->load->view('dashboard/v_header');
         $this->load->view('dashboard/v_artikel_edit',$data);
@@ -312,7 +335,9 @@ class Dashboard extends CI_Controller {
                          );
 
                         $data['artikel']  = $this->m_data->edit_data('artikel', $where)->result();
-                        $data['kategori'] = $this->m_data->get_data('kategori')->result();
+                        $data['kategori'] = $this->db
+            ->get_where('kategori',['kategori_tipe'=>'artikel'])
+            ->result();
 
                         $this->load->view('dashboard/v_header');
                         $this->load->view('dashboard/v_artikel_edit', $data);
@@ -332,7 +357,9 @@ class Dashboard extends CI_Controller {
                     );
 
                     $data['artikel']  = $this->m_data->edit_data('artikel', $where)->result();
-                    $data['kategori'] = $this->m_data->get_data('kategori')->result();
+                    $data['kategori'] = $this->db
+            ->get_where('kategori',['kategori_tipe'=>'artikel'])
+            ->result();
 
                     $this->load->view('dashboard/v_header');
                     $this->load->view('dashboard/v_artikel_edit', $data);
@@ -436,6 +463,161 @@ class Dashboard extends CI_Controller {
         $this->m_data->delete_data('halaman',$where);
         redirect(base_url().'dashboard/pages');
     }
+
+// LIST
+public function portfolio()
+{
+    $data['portfolio'] = $this->db->query("
+            SELECT p.*, k.kategori_nama
+            FROM portfolio p
+            LEFT JOIN kategori k ON p.portfolio_kategori = k.kategori_id
+            ORDER BY p.portfolio_id DESC
+        ")->result();
+
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_portfolio', $data);
+    $this->load->view('dashboard/v_footer');
+}
+
+// FORM TAMBAH
+public function portfolio_tambah()
+{
+    $data['kategori'] = $this->db
+            ->get_where('kategori',['kategori_tipe'=>'portfolio'])
+            ->result();
+
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_portfolio_tambah', $data);
+    $this->load->view('dashboard/v_footer');
+}
+
+
+// ACTION TAMBAH
+public function portfolio_tambah_aksi()
+{
+    $this->form_validation->set_rules('judul', 'Judul', 'required');
+    $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'required');
+    $this->form_validation->set_rules('kategori', 'Kategori', 'required');
+
+    if (empty($_FILES['gambar']['name'])) {
+        $this->form_validation->set_rules('gambar', 'Gambar', 'required');
+    }
+
+    if ($this->form_validation->run() != false) {
+
+        // pastikan folder ada: ./gambar/portfolio/
+        $config['upload_path']   = './gambar/portfolio/';
+        $config['allowed_types'] = 'jpg|jpeg|png|webp';
+        $config['max_size']      = 4096; // 4MB, ubah kalau perlu
+
+        $this->load->library('upload', $config);
+
+        if ($this->upload->do_upload('gambar')) {
+            $gambar = $this->upload->data();
+
+            $judul = $this->input->post('judul');
+            $data = [
+                'portfolio_judul'     => $judul,
+                'portfolio_slug'      => strtolower(url_title($judul)),
+                'portfolio_kategori'  => $this->input->post('kategori'),
+                'portfolio_deskripsi' => $this->input->post('deskripsi'),
+                'portfolio_gambar'    => $gambar['file_name'],
+                'portfolio_status'    => $this->input->post('status') ? $this->input->post('status') : 'draft',
+                'portfolio_tanggal'   => date('Y-m-d H:i:s')
+            ];
+
+            $this->m_data->insert_data('portfolio', $data);
+            redirect(base_url('dashboard/portfolio'));
+        } else {
+            $data['error'] = $this->upload->display_errors();
+            $this->load->view('dashboard/v_header');
+            $this->load->view('dashboard/v_portfolio_tambah', $data);
+            $this->load->view('dashboard/v_footer');
+        }
+
+    } else {
+    $data['kategori'] = $this->m_data->get_data('kategori')->result(); 
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_portfolio_tambah', $data);
+    $this->load->view('dashboard/v_footer');
+    }
+
+}
+
+// FORM EDIT (kembalikan single OBJECT, bukan array)
+public function portfolio_edit($id)
+{
+    $where = array('portfolio_id' => $id);
+    $data['portfolio'] = $this->m_data->edit_data('portfolio', $where)->row(); // <-- row() agar jadi object
+
+    if (!$data['portfolio']) {
+        // kalau id tidak ditemukan, redirect
+        redirect(base_url('dashboard/portfolio'));
+    }
+
+   $data['kategori'] = $this->db
+            ->get_where('kategori',['kategori_tipe'=>'portfolio'])
+            ->result();
+
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_portfolio_edit', $data);
+    $this->load->view('dashboard/v_footer');
+}
+
+// UPDATE
+public function portfolio_update()
+{
+    $this->form_validation->set_rules('judul', 'Judul', 'required');
+    $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'required');
+    $this->form_validation->set_rules('kategori', 'Kategori', 'required');
+
+    if ($this->form_validation->run() != false) {
+        $id     = $this->input->post('id');
+        $judul  = $this->input->post('judul');
+        $where  = ['portfolio_id' => $id];
+
+        $data = [
+            'portfolio_judul'     => $judul,
+            'portfolio_slug'      => strtolower(url_title($judul)),
+            'portfolio_kategori'  => $this->input->post('kategori'),
+            'portfolio_deskripsi' => $this->input->post('deskripsi'),
+            'portfolio_status'    => $this->input->post('status') ? $this->input->post('status') : 'draft'
+        ];
+
+        $this->m_data->update_data('portfolio', $data, $where);
+
+        if (!empty($_FILES['gambar']['name'])) {
+            $config['upload_path']   = './gambar/portfolio/';
+            $config['allowed_types'] = 'jpg|jpeg|png|webp';
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('gambar')) {
+                $gambar = $this->upload->data();
+                $this->m_data->update_data('portfolio', ['portfolio_gambar' => $gambar['file_name']], $where);
+            }
+        }
+
+        redirect(base_url('dashboard/portfolio'));
+    } else {
+        $id = $this->input->post('id');
+        $where = ['portfolio_id' => $id];
+        $data['portfolio'] = $this->m_data->edit_data('portfolio', $where)->row();
+        $data['kategori'] = $this->db
+            ->get_where('kategori',['kategori_tipe'=>'portfolio'])
+            ->result();
+        $this->load->view('dashboard/v_header');
+        $this->load->view('dashboard/v_portfolio_edit', $data);
+        $this->load->view('dashboard/v_footer');
+    }
+}
+
+// HAPUS
+public function portfolio_hapus($id)
+{
+    $where = ['portfolio_id' => $id];
+    $this->m_data->delete_data('portfolio', $where);
+    redirect(base_url('dashboard/portfolio'));
+}
 
     public function profil()
     {
@@ -678,6 +860,51 @@ class Dashboard extends CI_Controller {
         $this->m_data->update_data('artikel',$d,$w);
         redirect(base_url().'dashboard/pengguna');
     }
+
+// =====================
+// TESTIMONIAL (ADMIN)
+// =====================
+
+public function testimonial()
+{
+    $data['testimonial'] = $this->db
+        ->order_by('testimonial_status', 'ASC') // pending di atas
+        ->order_by('testimonial_id', 'DESC')
+        ->get('testimonial')
+        ->result();
+
+    $this->load->view('dashboard/v_header');
+    $this->load->view('dashboard/v_testimonial', $data);
+    $this->load->view('dashboard/v_footer');
+}
+
+public function testimonial_approve($id)
+{
+    // pastikan data ada
+    $cek = $this->db
+        ->get_where('testimonial', ['testimonial_id' => $id])
+        ->row();
+
+    if ($cek) {
+        $this->m_data->update_data(
+            'testimonial',
+            ['testimonial_status' => 'approved'],
+            ['testimonial_id' => $id]
+        );
+    }
+
+    redirect(base_url('dashboard/testimonial'));
+}
+
+public function testimonial_hapus($id)
+{
+    $this->m_data->delete_data(
+        'testimonial',
+        ['testimonial_id' => $id]
+    );
+
+    redirect(base_url('dashboard/testimonial'));
+}
 
     function keluar()
     {
